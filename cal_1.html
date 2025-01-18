@@ -15,7 +15,7 @@
         }
 
         header {
-            background-color: #ea9846ce;
+            background-color: #e9a15c;
             color: #fff;
             padding: 15px 20px;
             display: flex;
@@ -37,7 +37,6 @@
             height: 30px;
             margin-right: 10px;
         }
-
 
         header nav a {
             color: #fff;
@@ -114,14 +113,12 @@
         .calendar-body div {
             text-align: center;
             padding: 24px 0;
-            /* Increase padding to make the box taller */
             font-size: 17px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
 
         .calendar-body div:hover {
             background: #f0f0f0;
@@ -131,6 +128,31 @@
             background: #e9a15c;
             color: #fff;
             border-radius: 100%;
+        }
+
+        /* Internal section */
+        #internal-section {
+            display: none;
+            background-color: #fff;
+            width: 750px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            background-color: #e9a15c;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .back-btn:hover {
+            background-color: #d68c4f;
         }
     </style>
 </head>
@@ -148,24 +170,33 @@
         </nav>
     </header>
 
-
     <div class="container">
-        <div class="calendar">
-            <div class="calendar-header">
-                <button id="prev">&#10094;</button>
-                <h2 id="monthYear"></h2>
-                <button id="next">&#10095;</button>
+        <!-- Calendar Container -->
+        <div id="calendar-container">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button id="prev">&#10094;</button>
+                    <h2 id="monthYear"></h2>
+                    <button id="next">&#10095;</button>
+                </div>
+                <div class="calendar-days">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div class="calendar-body" id="calendarBody"></div>
             </div>
-            <div class="calendar-days">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-            </div>
-            <div class="calendar-body" id="calendarBody"></div>
+        </div>
+
+        <!-- Internal Section (hidden by default) -->
+        <div id="internal-section">
+            <h3>Details for <span id="selected-date"></span></h3>
+            <p>Here are the details for the selected date.</p>
+            <button class="back-btn" onclick="backToCalendar()">Back to Calendar</button>
         </div>
     </div>
 
@@ -174,6 +205,8 @@
         const calendarBody = document.getElementById("calendarBody");
         const prev = document.getElementById("prev");
         const next = document.getElementById("next");
+        const internalSection = document.getElementById("internal-section");
+        const calendarContainer = document.getElementById("calendar-container");
 
         const months = [
             "January", "February", "March", "April", "May", "June",
@@ -202,6 +235,7 @@
                 const dayCell = document.createElement("div");
                 dayCell.textContent = day;
 
+                // Check if it's today
                 const today = new Date();
                 if (
                     day === today.getDate() &&
@@ -211,8 +245,28 @@
                     dayCell.classList.add("today");
                 }
 
+                // Add click event to each date
+                dayCell.onclick = function () {
+                    showInternalSection(year, month, day);
+                };
+
                 calendarBody.appendChild(dayCell);
             }
+        }
+
+        function showInternalSection(year, month, day) {
+            const dateString = `${months[month]} ${day}, ${year}`;
+            document.getElementById("selected-date").textContent = dateString;
+
+            // Hide calendar and show the internal section
+            calendarContainer.style.display = "none";
+            internalSection.style.display = "block";
+        }
+
+        function backToCalendar() {
+            // Hide internal section and show calendar
+            internalSection.style.display = "none";
+            calendarContainer.style.display = "block";
         }
 
         prev.addEventListener("click", () => {
