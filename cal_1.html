@@ -15,7 +15,7 @@
         }
 
         header {
-            background-color: #e08f44;
+            background-color: #e9a15c;
             color: #fff;
             padding: 15px 20px;
             display: flex;
@@ -56,16 +56,21 @@
             padding: 20px;
         }
 
-        .calendar {
+        .calendar,
+        .year-view,
+        .contact-section,
+        .about-section {
             width: 750px;
             height: 500px;
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            display: none;
         }
 
-        .calendar-header {
+        .calendar-header,
+        .year-view-header {
             display: flex;
             font-weight: normal;
             justify-content: space-between;
@@ -75,7 +80,8 @@
             color: #fff;
         }
 
-        .calendar-header button {
+        .calendar-header button,
+        .year-view-header button {
             background: none;
             border: none;
             color: #fff;
@@ -83,7 +89,8 @@
             cursor: pointer;
         }
 
-        .calendar-header h2 {
+        .calendar-header h2,
+        .year-view-header h2 {
             margin: 0;
             font-weight: 500;
             font-size: 22px;
@@ -103,14 +110,16 @@
             font-size: 20px;
         }
 
-        .calendar-body {
+        .calendar-body,
+        .year-view-body {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             padding: 10px;
             background: #fff;
         }
 
-        .calendar-body div {
+        .calendar-body div,
+        .year-view-body div {
             text-align: center;
             padding: 24px 0;
             font-size: 17px;
@@ -120,7 +129,8 @@
             align-items: center;
         }
 
-        .calendar-body div:hover {
+        .calendar-body div:hover,
+        .year-view-body div:hover {
             background: #f0f0f0;
         }
 
@@ -131,7 +141,9 @@
         }
 
         /* Internal section */
-        #internal-section {
+        #internal-section,
+        .about-section,
+        .contact-section {
             display: none;
             background-color: #fff;
             width: 750px;
@@ -154,6 +166,17 @@
         .back-btn:hover {
             background-color: #d68c4f;
         }
+
+        /* Year View Grid */
+        .year-view-body {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .year-view-body div {
+            padding: 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -164,38 +187,62 @@
             <span>LUNA</span>
         </div>
         <nav>
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="#" id="calendar-link">Calendar</a>
+            <a href="#" id="home-link">Home</a>
+            <a href="#" id="about-link">About</a>
+            <a href="#" id="contact-link">Contact</a>
         </nav>
     </header>
 
     <div class="container">
-        <!-- Calendar Container -->
-        <div id="calendar-container">
-            <div class="calendar">
-                <div class="calendar-header">
-                    <button id="prev">&#10094;</button>
-                    <h2 id="monthYear"></h2>
-                    <button id="next">&#10095;</button>
-                </div>
-                <div class="calendar-days">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
-                </div>
-                <div class="calendar-body" id="calendarBody"></div>
+        <!-- Year View -->
+        <div id="year-view" class="year-view">
+            <div class="year-view-header">
+                <button id="prev-year">&#10094;</button>
+                <h2 id="yearTitle"></h2>
+                <button id="next-year">&#10095;</button>
             </div>
+            <div class="year-view-body" id="yearViewBody"></div>
+        </div>
+
+        <!-- Calendar Container -->
+        <div id="calendar-container" class="calendar">
+            <div class="calendar-header">
+                <button id="prev">&#10094;</button>
+                <h2 id="monthYear"></h2>
+                <button id="next">&#10095;</button>
+            </div>
+            <div class="calendar-days">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="calendar-body" id="calendarBody"></div>
         </div>
 
         <!-- Internal Section (hidden by default) -->
         <div id="internal-section">
             <h3>Details for <span id="selected-date"></span></h3>
             <p>Here are the details for the selected date.</p>
+            <button class="back-btn" onclick="backToCalendar()">Back to Calendar</button>
+        </div>
+
+        <!-- About Section -->
+        <div id="about-section" class="about-section">
+            <h3>Welcome to Digital Diary :)</h3>
+            <button class="back-btn" onclick="backToCalendar()">Back to Calendar</button>
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact-section" class="contact-section">
+            <h3>For any complaints, please contact:</h3>
+            <p>Vani - dummygmail@1234.gmail.com</p>
+            <p>Varsha - dummygmail@1234.gmail.com</p>
+            <p>Madhuri - dummygmail@1234.gmail.com</p>
             <button class="back-btn" onclick="backToCalendar()">Back to Calendar</button>
         </div>
     </div>
@@ -207,6 +254,17 @@
         const next = document.getElementById("next");
         const internalSection = document.getElementById("internal-section");
         const calendarContainer = document.getElementById("calendar-container");
+        const yearView = document.getElementById("year-view");
+        const yearTitle = document.getElementById("yearTitle");
+        const yearViewBody = document.getElementById("yearViewBody");
+        const prevYear = document.getElementById("prev-year");
+        const nextYear = document.getElementById("next-year");
+        const calendarLink = document.getElementById("calendar-link");
+        const homeLink = document.getElementById("home-link");
+        const aboutLink = document.getElementById("about-link");
+        const contactLink = document.getElementById("contact-link");
+        const aboutSection = document.getElementById("about-section");
+        const contactSection = document.getElementById("contact-section");
 
         const months = [
             "January", "February", "March", "April", "May", "June",
@@ -214,6 +272,7 @@
         ];
 
         let currentDate = new Date();
+        let currentYear = currentDate.getFullYear();
 
         function renderCalendar(date) {
             const year = date.getFullYear();
@@ -264,10 +323,83 @@
         }
 
         function backToCalendar() {
-            // Hide internal section and show calendar
-            internalSection.style.display = "none";
-            calendarContainer.style.display = "block";
+            internalSection.style.display = "none";  // Hide the internal section
+            aboutSection.style.display = "none";  // Hide the about section
+            contactSection.style.display = "none";  // Hide the contact section
+            yearView.style.display = "none";  // Hide the year view
+            calendarContainer.style.display = "block";  // Show the calendar
         }
+
+
+        // Year View
+        function renderYearView(year) {
+            yearTitle.textContent = `Year ${year}`;
+            yearViewBody.innerHTML = "";
+
+            for (let month = 0; month < 12; month++) {
+                const monthCell = document.createElement("div");
+                monthCell.textContent = months[month];
+                monthCell.onclick = function () {
+                    currentDate.setFullYear(year);
+                    currentDate.setMonth(month);
+                    renderCalendar(currentDate);
+                    yearView.style.display = "none";
+                    calendarContainer.style.display = "block";
+                };
+                yearViewBody.appendChild(monthCell);
+            }
+        }
+
+        // Home link - back to today's month
+        homeLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            currentDate = new Date();
+            renderCalendar(currentDate);  // Re-render calendar to today's date
+            backToCalendar();  // Ensure calendar is visible and others are hidden
+        });
+
+        // About link - show the about section
+        aboutLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            aboutSection.style.display = "block";  // Show the about section
+            calendarContainer.style.display = "none";  // Hide the calendar
+            internalSection.style.display = "none";  // Hide the internal section
+            contactSection.style.display = "none";  // Hide the contact section
+        });
+
+        // Contact link - show the contact section
+        contactLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            contactSection.style.display = "block";  // Show the contact section
+            calendarContainer.style.display = "none";  // Hide the calendar
+            internalSection.style.display = "none";  // Hide the internal section
+            aboutSection.style.display = "none";  // Hide the about section
+        });
+
+        // Calendar link - show the year view
+        calendarLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            yearView.style.display = "block";  // Show the year view
+            calendarContainer.style.display = "none";  // Hide the calendar
+            internalSection.style.display = "none";  // Hide the internal section
+            aboutSection.style.display = "none";  // Hide the about section
+            contactSection.style.display = "none";  // Hide the contact section
+        });// Calendar link - show the year view
+        calendarLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            // Hide all other sections
+            internalSection.style.display = "none";
+            aboutSection.style.display = "none";
+            contactSection.style.display = "none";
+            calendarContainer.style.display = "none";
+
+            // Show the year view
+            yearView.style.display = "block";
+
+            // Render the year view
+            renderYearView(currentYear);
+        });
+
 
         prev.addEventListener("click", () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -279,7 +411,29 @@
             renderCalendar(currentDate);
         });
 
-        renderCalendar(currentDate);
+        prevYear.addEventListener("click", () => {
+            currentYear--;
+            renderYearView(currentYear);
+        });
+
+        nextYear.addEventListener("click", () => {
+            currentYear++;
+            renderYearView(currentYear);
+        });
+
+        // Initial Render
+
+        document.addEventListener("DOMContentLoaded", function () {
+            renderCalendar(currentDate); // Show today's month when the page loads
+        });
+        // Show today's calendar when the page loads
+        calendarContainer.style.display = "block";  // Show the calendar view
+        aboutSection.style.display = "none";        // Hide the about section
+        contactSection.style.display = "none";      // Hide the contact section
+        yearView.style.display = "none";            // Hide the year view
+        internalSection.style.display = "none";     // Hide the internal section
+
+
     </script>
 </body>
 
